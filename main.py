@@ -12,7 +12,7 @@ from botcity.core import DesktopBot
 class NotepadBot(DesktopBot):
     def __init__(self):
         super().__init__()
-        # Setup logger
+        # Setup logger with both file and console handlers
         self.logger = logging.getLogger('NotepadBot')
 
     def find_window_by_title(self, title, matching=1.0):
@@ -31,22 +31,44 @@ class NotepadBot(DesktopBot):
         desktop_path = Path.home() / "Desktop" / "tjm-project"
         desktop_path.mkdir(parents=True, exist_ok=True)
 
+        # Create logs directory
+        logs_path = desktop_path / "logs"
+        logs_path.mkdir(parents=True, exist_ok=True)
+
+        self.logger.info(f"Files will be saved to: {desktop_path}")
+        self.logger.info(f"Logs will be saved to: {logs_path}")
+
         # Fetch posts from the API
         try:
+            self.logger.info("Fetching posts from JSONPlaceholder API...")
             response = requests.get("https://jsonplaceholder.typicode.com/posts")
             posts = response.json()
             # Limit to the first 10 posts
             posts = posts[:10]
+            self.logger.info(f"Successfully fetched {len(posts)} posts")
         except Exception as e:
             self.logger.error(f"Failed to fetch posts: {e}")
             return
+
+        # Track processed posts
+        processed_posts = []
+        skipped_posts = []
 
         for post in posts:
             post_id = post["id"]
             title = post["title"]
             body = post["body"]
 
+            # Ask user if they want to save this post
+            save_post = input(f"\nProcess post {post_id} with title: '{title}'? (y/n): ").strip().lower()
+            if save_post != 'y':
+                self.logger.info(f"Skipping post {post_id}")
+                skipped_posts.append(post_id)
+                continue
+
             try:
+                self.logger.info(f"Processing post {post_id}...")
+
                 # Launch Notepad
                 self.execute("notepad.exe")
                 time.sleep(1)  # Wait for Notepad to open
@@ -94,7 +116,8 @@ class NotepadBot(DesktopBot):
                 pyautogui.hotkey('alt', 'f4')
                 time.sleep(1)
 
-                self.logger.info(f"Successfully saved post {post_id}")
+                self.logger.info(f"Successfully saved post {post_id} to {file_path}")
+                processed_posts.append(post_id)
 
             except Exception as e:
                 self.logger.error(f"Error processing post {post_id}: {e}")
@@ -107,25 +130,88 @@ class NotepadBot(DesktopBot):
                     pass
 
             # Small delay between iterations
-            time.sleep(2)
+            time.sleep(1)
+
+        # Save a summary report
+        summary_path = logs_path / "summary_report.txt"
+        with open(summary_path, 'w') as f:
+            f.write("=== NOTEPAD BOT SUMMARY REPORT ===\n\n")
+            f.write(f"Date and Time: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"Total posts fetched: {len(posts)}\n")
+            f.write(f"Posts processed: {len(processed_posts)}\n")
+            f.write(f"Posts skipped: {len(skipped_posts)}\n\n")
+
+            f.write("Processed post IDs:\n")
+            for pid in processed_posts:
+                f.write(f"- Post {pid}\n")
+
+            f.write("\nSkipped post IDs:\n")
+            for pid in skipped_posts:
+                f.write(f"- Post {pid}\n")
+
+        self.logger.info(f"Summary report saved to {summary_path}")
+
+        # Print final summary to terminal
+        print("\n=== PROCESSING COMPLETE ===")
+        print(f"Total posts fetched: {len(posts)}")
+        print(f"Posts processed: {len(processed_posts)}")
+        print(f"Posts skipped: {len(skipped_posts)}")
+        print(f"Files saved to: {desktop_path}")
+        print(f"Summary report saved to: {summary_path}")
+
+
+def setup_logging(log_file):
+    """Set up logging to both file and console"""
+    # Create logger
+    logger = logging.getLogger('NotepadBot')
+    logger.setLevel(logging.INFO)
+
+    # Create file handler
+    file_handler = logging.FileHandler(log_file)
+    file_handler.setLevel(logging.INFO)
+
+    # Create console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+
+    # Create formatter and add it to the handlers
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(formatter)
+    console_handler.setFormatter(formatter)
+
+    # Add handlers to logger
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
+
+    return logger
 
 
 def main():
-    # Configure logging
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    )
+    # Create directory for saving files if it doesn't exist
+    desktop_path = Path.home() / "Desktop" / "tjm-project"
+    desktop_path.mkdir(parents=True, exist_ok=True)
+
+    # Create logs directory
+    logs_path = desktop_path / "logs"
+    logs_path.mkdir(parents=True, exist_ok=True)
+
+    # Setup logging
+    log_file = logs_path / f"notepad_bot_{time.strftime('%Y%m%d_%H%M%S')}.log"
+    setup_logging(log_file)
 
     # Initialize and run the bot
+    print("\n=== Notepad Data Entry Bot ===")
+    print("This script will fetch posts from JSONPlaceholder API and create text files in Notepad")
+    print(f"Files will be saved to: {desktop_path}")
+    print(f"Logs will be saved to: {logs_path}")
+    print("You can choose which posts to process\n")
+
     bot = NotepadBot()
     bot.action()
 
 
 if __name__ == "__main__":
     main()
-
-
 
 
 
