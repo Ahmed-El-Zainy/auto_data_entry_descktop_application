@@ -7,13 +7,19 @@ from pathlib import Path
 import pyautogui
 import pygetwindow as gw
 from botcity.core import DesktopBot
+from src.logger.custom_logger import CustomLoggerTracker
+
+# Create an instance first
+logger_tracker = CustomLoggerTracker()
+# Get a logger for the registration module
+logger = logger_tracker.get_logger("registration")
+# logger.info("These is a test message")
+
 
 
 class NotepadBot(DesktopBot):
     def __init__(self):
         super().__init__()
-        # Setup logger with both file and console handlers
-        self.logger = logging.getLogger('NotepadBot')
 
     def find_window_by_title(self, title, matching=1.0):
         """Custom method to find a window by title"""
@@ -23,7 +29,7 @@ class NotepadBot(DesktopBot):
                 return True
             return False
         except Exception as e:
-            self.logger.error(f"Error finding window: {e}")
+            logger.error(f"Error finding window: {e}")
             return False
 
     def action(self, execution=None):
@@ -35,19 +41,19 @@ class NotepadBot(DesktopBot):
         logs_path = desktop_path / "logs"
         logs_path.mkdir(parents=True, exist_ok=True)
 
-        self.logger.info(f"Files will be saved to: {desktop_path}")
-        self.logger.info(f"Logs will be saved to: {logs_path}")
+        logger.info(f"Files will be saved to: {desktop_path}")
+        logger.info(f"Logs will be saved to: {logs_path}")
 
         # Fetch posts from the API
         try:
-            self.logger.info("Fetching posts from JSONPlaceholder API...")
+            logger.info("Fetching posts from JSONPlaceholder API...")
             response = requests.get("https://jsonplaceholder.typicode.com/posts")
             posts = response.json()
             # Limit to the first 10 posts
             posts = posts[:10]
-            self.logger.info(f"Successfully fetched {len(posts)} posts")
+            logger.info(f"Successfully fetched {len(posts)} posts")
         except Exception as e:
-            self.logger.error(f"Failed to fetch posts: {e}")
+            logger.error(f"Failed to fetch posts: {e}")
             return
 
         # Track processed posts
@@ -62,12 +68,12 @@ class NotepadBot(DesktopBot):
             # Ask user if they want to save this post
             save_post = input(f"\nProcess post {post_id} with title: '{title}'? (y/n): ").strip().lower()
             if save_post != 'y':
-                self.logger.info(f"Skipping post {post_id}")
+                logger.info(f"Skipping post {post_id}")
                 skipped_posts.append(post_id)
                 continue
 
             try:
-                self.logger.info(f"Processing post {post_id}...")
+                logger.info(f"Processing post {post_id}...")
 
                 # Launch Notepad
                 self.execute("notepad.exe")
@@ -75,7 +81,7 @@ class NotepadBot(DesktopBot):
 
                 # Check if Notepad is open
                 if not self.find_window_by_title("Untitled - Notepad"):
-                    self.logger.error("Failed to launch Notepad")
+                    logger.error("Failed to launch Notepad")
                     continue
 
                 # Make Notepad the active window
@@ -116,11 +122,11 @@ class NotepadBot(DesktopBot):
                 pyautogui.hotkey('alt', 'f4')
                 time.sleep(1)
 
-                self.logger.info(f"Successfully saved post {post_id} to {file_path}")
+                logger.info(f"Successfully saved post {post_id} to {file_path}")
                 processed_posts.append(post_id)
 
             except Exception as e:
-                self.logger.error(f"Error processing post {post_id}: {e}")
+                logger.error(f"Error processing post {post_id}: {e}")
                 # Try to close Notepad if it's still open
                 try:
                     notepad_windows = gw.getWindowsWithTitle("Notepad")
@@ -149,41 +155,18 @@ class NotepadBot(DesktopBot):
             for pid in skipped_posts:
                 f.write(f"- Post {pid}\n")
 
-        self.logger.info(f"Summary report saved to {summary_path}")
+        logger.info(f"Summary report saved to {summary_path}")
 
         # Print final summary to terminal
-        print("\n=== PROCESSING COMPLETE ===")
-        print(f"Total posts fetched: {len(posts)}")
-        print(f"Posts processed: {len(processed_posts)}")
-        print(f"Posts skipped: {len(skipped_posts)}")
-        print(f"Files saved to: {desktop_path}")
-        print(f"Summary report saved to: {summary_path}")
+        logger.info("\n=== PROCESSING COMPLETE ===")
+        logger.info(f"Total posts fetched: {len(posts)}")
+        logger.info(f"Total posts fetched: {len(posts)}")
+        logger.info(f"Posts processed: {len(processed_posts)}")
+        logger.info(f"Posts skipped: {len(skipped_posts)}")
+        logger,info(f"Files saved to: {desktop_path}")
+        logger.info(f"Summary report saved to: {summary_path}")
 
 
-def setup_logging(log_file):
-    """Set up logging to both file and console"""
-    # Create logger
-    logger = logging.getLogger('NotepadBot')
-    logger.setLevel(logging.INFO)
-
-    # Create file handler
-    file_handler = logging.FileHandler(log_file)
-    file_handler.setLevel(logging.INFO)
-
-    # Create console handler
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
-
-    # Create formatter and add it to the handlers
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    file_handler.setFormatter(formatter)
-    console_handler.setFormatter(formatter)
-
-    # Add handlers to logger
-    logger.addHandler(file_handler)
-    logger.addHandler(console_handler)
-
-    return logger
 
 
 def main():
@@ -195,9 +178,9 @@ def main():
     logs_path = desktop_path / "logs"
     logs_path.mkdir(parents=True, exist_ok=True)
 
-    # Setup logging
-    log_file = logs_path / f"notepad_bot_{time.strftime('%Y%m%d_%H%M%S')}.log"
-    setup_logging(log_file)
+    # # Setup logging
+    # log_file = logs_path / f"notepad_bot_{time.strftime('%Y%m%d_%H%M%S')}.log"
+    # setup_logging(log_file)
 
     # Initialize and run the bot
     print("\n=== Notepad Data Entry Bot ===")
