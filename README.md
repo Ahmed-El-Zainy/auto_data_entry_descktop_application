@@ -6,53 +6,30 @@ This project automates data entry into Notepad using **Python**, **BotCity**, an
 
 ---
 ## Features
-| Feature | Description |
-|---------|-------------|
-| **Fetches** blog posts from the [JSONPlaceholder API](https://jsonplaceholder.typicode.com/guide/) | Fetches blog posts from the JSONPlaceholder API |
-| **Automates** Notepad to create and save documents | Automates Notepad to create and save documents |
-| **Loops** through the first 10 posts | Loops through the first 10 posts |
-| **Handles errors** such as application failures | Handles errors such as application failures |
+## Project Requirements & Progress Tracking
 
----
-
-## Requirements
-### 1. Setup
-| Step | Description | progress |
-|------|-------------|-------------|
-| Install **Python** and create a virtual environment | Install Python and create a virtual environment |
-| Install **BotCity** and **PyAutoGUI** | Install BotCity and PyAutoGUI |
-| Ensure **Notepad** is installed on your system | Ensure Notepad is installed on your system |
-
-### 2. Automation Tasks
-| Task | Description | progress |
-|------|-------------|----------|
-| **Launch Notepad** using Python | Launch Notepad using Python |
-| **Fetch Posts** from JSONPlaceholder API | Fetch Posts from JSONPlaceholder API |
-| **Type each post** as a formatted blog entry | Type each post as a formatted blog entry |
-| Include a **title** and **body** | Include a title and body |
-| **Save the document** in `tjm-project` on the desktop | Save the document in `tjm-project` on the desktop |
-| Filename format: `post_<id>.txt` | Filename format: `post_<id>.txt` |
-| Example: `post_1.txt`, `post_2.txt`, ..., `post_10.txt` | Example: `post_1.txt`, `post_2.txt`, ..., `post_10.txt` |
-
-### 3. Error Handling
-| Error Handling | Description | progress |
-|----------------|-------------|-------------|
-| Ensure **Notepad opens correctly** | Ensure Notepad opens correctly | 
-| Handle **missing UI elements** | Handle missing UI elements |
-| Validate **API response** | Validate API response |
-
-### 4. Discussion Points
-| Discussion Point | Description |
-|------------------|-------------|
-| Technical choices: Why **BotCity & PyAutoGUI**? | Technical choices: Why BotCity & PyAutoGUI? |
-| Limitations and possible improvements | Limitations and possible improvements |
-
+| Task ID | Category | Description | Status | Tag |
+|---------|----------|-------------|---------|-----|
+| S1 | Setup | Install **Python** and create a virtual environment | ✅ Done | #environment |
+| S2 | Setup | Install **BotCity** and **PyAutoGUI** | ✅ Done | #dependencies |
+| S3 | Setup | Ensure **Notepad** is installed on system | ✅ Done | #system |
+| A1 | Automation | **Launch Notepad** using Python | ✅ Done | #automation |
+| A2 | Automation | **Fetch Posts** from JSONPlaceholder API | ✅ Done | #api |
+| A3 | Automation | **Type each post** as formatted blog entry | ✅ Done | #content |
+| A4 | Automation | Include **title** and **body** | ✅ Done | #formatting |
+| A5 | Automation | **Save document** in `tjm-project` on desktop | ✅ Done | #files |
+| A6 | Automation | Use filename format `post_<id>.txt` | ✅ Done | #naming |
+| E1 | Error Handling | Ensure **Notepad opens correctly** | 🚧 In Progress | #validation |
+| E2 | Error Handling | Handle **missing UI elements** | 🚧 In Progress | #errors |
+| E3 | Error Handling | Validate **API response** | ✅ Done | #api |
+| D1 | Discussion | Technical choices: **BotCity & PyAutoGUI** | ✅ Done | #architecture |
+| D2 | Discussion | Limitations and improvements | 🚧 In Progress | #improvements |
 ---
 
 ## Installation
 ### Step 1: Clone the Repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/Ahmed-El-Zainy/auto_data_entry_descktop_application.git
 cd automated-data-entry-bot
 ```
 
@@ -61,6 +38,13 @@ cd automated-data-entry-bot
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
+```
+
+or 
+
+```bash
+chmod +x setup.sh
+./setup.sh
 ```
 
 ### Step 3: Run the Script
