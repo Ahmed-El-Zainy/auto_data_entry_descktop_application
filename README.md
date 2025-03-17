@@ -57,9 +57,18 @@ python main.py
 ## Folder Structure
 ```
 /automated-data-entry-bot
+│── src
+    │──logger
+        │──logger.py
+        │──logging_config.yaml
+    │──tests
+        │──unittest_main.py
+    │──utlities.py
+
 │── main.py  # Main automation script
 │── README.md  # Project documentation
 │── requirements.txt  # Dependencies
+│── setup.sh  # Setup script
 │── /tjm-project  # Directory for saved files
 ```
 
@@ -82,9 +91,6 @@ This is a test post from JSONPlaceholder.
 
 
 ---
-
-## Author
-Developed by [Your Name].
 
 
 
