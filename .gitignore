@@ -34,7 +34,7 @@ MANIFEST
 *.manifest
 *.spec
 
-/logs
+/temp/logs
 
 # Installer logs
 pip-log.txt
@@ -176,5 +176,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+.qodo
 
 .qodo

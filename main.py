@@ -8,6 +8,7 @@ import pyautogui
 import pygetwindow as gw
 from botcity.core import DesktopBot
 from src.logger.custom_logger import CustomLoggerTracker
+from tqdm import tqdm
 
 # Create an instance first
 logger_tracker = CustomLoggerTracker()
@@ -34,7 +35,7 @@ class NotepadBot(DesktopBot):
 
     def action(self, execution=None):
         # Create directory for saving files if it doesn't exist
-        desktop_path = Path.home() / "Desktop" / "tjm-project"
+        desktop_path = Path.home() / "PycharmProjects/autoE_2DA" / "temp"/ "tjm-project"
         desktop_path.mkdir(parents=True, exist_ok=True)
 
         # Create logs directory
@@ -60,14 +61,15 @@ class NotepadBot(DesktopBot):
         processed_posts = []
         skipped_posts = []
 
-        for post in posts:
+        for post in tqdm(len(posts), desc="Processing posts", colour="greem"):
+            user_id = post["userId"]
             post_id = post["id"]
             title = post["title"]
             body = post["body"]
 
             # Ask user if they want to save this post
             save_post = input(f"\nProcess post {post_id} with title: '{title}'? (y/n): ").strip().lower()
-            if save_post != 'y':
+            if save_post != 'n':
                 logger.info(f"Skipping post {post_id}")
                 skipped_posts.append(post_id)
                 continue
@@ -78,6 +80,7 @@ class NotepadBot(DesktopBot):
                 # Launch Notepad
                 self.execute("notepad.exe")
                 time.sleep(1)  # Wait for Notepad to open
+                logger.info("Notepad launched")
 
                 # Check if Notepad is open
                 if not self.find_window_by_title("Untitled - Notepad"):
@@ -88,6 +91,7 @@ class NotepadBot(DesktopBot):
                 notepad_window = gw.getWindowsWithTitle("Untitled - Notepad")[0]
                 notepad_window.activate()
                 time.sleep(0.5)
+                logger.info("Notepad activated")
 
                 # Type the title in uppercase with underline
                 pyautogui.write(f"{title.upper()}\n")
@@ -107,10 +111,12 @@ class NotepadBot(DesktopBot):
                 # Type the file path
                 pyautogui.write(str(file_path))
                 time.sleep(0.5)
+                logger.info("File path typed")
 
                 # Press Save button
                 pyautogui.press('enter')
                 time.sleep(1)
+                logger.info("File saved")
 
                 # Handle potential "Replace" dialog if file exists
                 if self.find_window_by_title("Confirm Save As"):
@@ -121,6 +127,7 @@ class NotepadBot(DesktopBot):
                 # Close Notepad
                 pyautogui.hotkey('alt', 'f4')
                 time.sleep(1)
+                logger.info("Notepad closed")
 
                 logger.info(f"Successfully saved post {post_id} to {file_path}")
                 processed_posts.append(post_id)
@@ -163,7 +170,7 @@ class NotepadBot(DesktopBot):
         logger.info(f"Total posts fetched: {len(posts)}")
         logger.info(f"Posts processed: {len(processed_posts)}")
         logger.info(f"Posts skipped: {len(skipped_posts)}")
-        logger,info(f"Files saved to: {desktop_path}")
+        logger.info(f"Files saved to: {desktop_path}")
         logger.info(f"Summary report saved to: {summary_path}")
 
 
@@ -188,7 +195,6 @@ def main():
     print(f"Files will be saved to: {desktop_path}")
     print(f"Logs will be saved to: {logs_path}")
     print("You can choose which posts to process\n")
-
     bot = NotepadBot()
     bot.action()
 
