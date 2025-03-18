@@ -19,7 +19,7 @@ This project automates data entry into Notepad using **Python**, **BotCity**, an
 | A4 | Automation | Include **title** and **body** | ✅ Done | #formatting |
 | A5 | Automation | **Save document** in `tjm-project` on desktop | ✅ Done | #files |
 | A6 | Automation | Use filename format `post_<id>.txt` | ✅ Done | #naming |
-| E1 | Error Handling | Ensure **Notepad opens correctly** | 🚧 In Progress | #validation |
+| E1 | Error Handling | Ensure **Notepad opens correctly** | ✅ Done | #validation |
 | E2 | Error Handling | Handle **missing UI elements** | 🚧 In Progress | #errors |
 | E3 | Error Handling | Validate **API response** | ✅ Done | #api |
 | D1 | Discussion | Technical choices: **BotCity & PyAutoGUI** | ✅ Done | #architecture |
