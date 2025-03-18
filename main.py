@@ -205,6 +205,7 @@ class NotepadBot(DesktopBot):
             logger.error(f"Error pressing hotkey {keys}: {str(e)}")
             return False
 
+
     def safe_press(self, key):
         """Press key safely with error handling"""
         try:
@@ -220,7 +221,6 @@ class NotepadBot(DesktopBot):
 
         Args:
             post (dict): Post data
-
         Returns:
             bool: True if successful, False otherwise
         """
