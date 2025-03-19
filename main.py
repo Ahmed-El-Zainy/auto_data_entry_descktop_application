@@ -1,8 +1,6 @@
 import os
 import time
-import json
 import requests
-import logging
 from pathlib import Path
 import pyautogui
 import pygetwindow as gw
@@ -14,6 +12,7 @@ import sys
 
 # Create an instance first
 logger_tracker = CustomLoggerTracker()
+
 # Get a logger for the registration module
 logger = logger_tracker.get_logger("main")
 
